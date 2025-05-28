@@ -3,3 +3,8 @@ export const APP_DESCRIPTION = process.env.NEXT_PUBLIC_APP_DESCRIPTION || 'A mod
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://pro-store.vercel.app';
 
 export const LATEST_PRODUCTS_LIMIT = Number(process.env.LATEST_PRODUCT_LIMIT) || 4;
+
+export const signInDefaultValues = {
+    email: '',
+    password: ''
+}
