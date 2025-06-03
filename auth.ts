@@ -3,8 +3,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/db/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compareSync } from "bcrypt-ts-edge";
- 
- 
+import { NextResponse } from "next/server";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/sign-in",
@@ -23,19 +23,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (credentials == null) return null;
- 
+
         //find user in database
         const user = await prisma.user.findFirst({
           where: { email: credentials.email as string },
         });
- 
+
         //Check if user exists and if the password matches
         if (user && user.password) {
           const isMatch = compareSync(
             credentials.password as string,
-            user.password,
+            user.password
           );
- 
+
           //If password is correct, return user.
           if (isMatch) {
             return {
@@ -47,7 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
         }
         //if user does not exists or password does not match return null;
-        return null; 
+        return null;
       },
     }),
   ],
@@ -67,19 +67,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       //Assign user fields to token.
       if (user) {
         token.role = user.role;
- 
+
         //If user has no name then use the email
         if (user.name === "NO_NAME") {
           token.name = user.email!.split("@")[0];
- 
+
           //Update database to reflect the token name
           await prisma.user.update({
-            where: { id: user.id }, 
+            where: { id: user.id },
             data: { name: token.name },
           });
         }
       }
       return token;
+    },
+    authorized({ request, auth }) {
+      //Check for session cart cookie
+      if (!request.cookies.get("sessionCartId")) {
+        //Generate new session cart id cookie
+        const sessionCartId = crypto.randomUUID();
+        //Clone request headers
+        const newRequestHeaders = new Headers(request.headers);
+        //Create new Response and add new headers.
+        const response = NextResponse.next({
+          request: {
+            headers: newRequestHeaders,
+          },
+        });
+        // set new generated sessionCartId in the response cookies.
+        response.cookies.set("sessionCartId", sessionCartId);
+        return response;
+      } else {
+        return true;
+      }
     },
   },
 });
