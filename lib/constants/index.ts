@@ -16,3 +16,11 @@ export const signUpDefaultValues = {
     password: '',
     confirmPassword:''
 };
+
+export const shippingAddressDefaultValues = {
+fullName: "John Doe",
+  streetAddress: "Some Street 123",
+  city: "Edinburgh",
+  postCode: "EH14 1AA",
+  country: "Scotland"
+}
