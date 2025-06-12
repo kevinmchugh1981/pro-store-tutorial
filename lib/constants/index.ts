@@ -18,9 +18,9 @@ export const signUpDefaultValues = {
 };
 
 export const shippingAddressDefaultValues = {
-fullName: "John Doe",
-  streetAddress: "Some Street 123",
-  city: "Edinburgh",
-  postCode: "EH14 1AA",
-  country: "Scotland"
+fullName: "",
+  streetAddress: "",
+  city: "",
+  postCode: "",
+  country: ""
 }
