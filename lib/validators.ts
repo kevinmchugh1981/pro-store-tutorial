@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { formatNumberWithDecimal } from "./utils";
+import { PAYMENT_METHODS } from "./constants";
 
 const currency = z
   .string()
@@ -56,22 +57,36 @@ export const cartItemSchema = z.object({
 });
 
 export const insertCartSchema = z.object({
-items: z.array(cartItemSchema),
-itemsPrice: currency,
-totalPrice: currency,
-shippingPrice: currency,
-taxPrice: currency,
-sessionCartId: z.string().min(1, "Session cart id is required"),
-userId: z.string().optional().nullable()
+  items: z.array(cartItemSchema),
+  itemsPrice: currency,
+  totalPrice: currency,
+  shippingPrice: currency,
+  taxPrice: currency,
+  sessionCartId: z.string().min(1, "Session cart id is required"),
+  userId: z.string().optional().nullable(),
 });
 
 //Schema for shipping address
 export const shippingAddressSchema = z.object({
   fullName: z.string().min(3, "Name must be at least 3 characters long"),
-  streetAddress: z.string().min(3, "Address must be at least 3 characters long"),
+  streetAddress: z
+    .string()
+    .min(3, "Address must be at least 3 characters long"),
   city: z.string().min(3, "City must be at least 3 characters long"),
   postCode: z.string().min(3, "Post must be at least 3 characters long"),
   country: z.string().min(3, "Country must be at least 3 characters long"),
   lat: z.number().optional(),
-  lng: z.number().optional()
+  lng: z.number().optional(),
 });
+
+//Schema for payment method
+export const paymentMethodSchema = z
+  .object({
+    type: z.string().min(1, "Payment method is required"),
+  })
+  .refine((data) => PAYMENT_METHODS.includes(data.type), {
+    path: ["type"],
+    message: `Payment method must be one of the following: ${PAYMENT_METHODS.join(
+      ", "
+    )}`,
+  });
