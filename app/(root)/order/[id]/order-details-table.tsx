@@ -91,7 +91,7 @@ const OrderDetailsTable = ({ order }: { order: Order }) => {
                         <span className="px-2">{item.qty}</span>
                       </TableCell>
                       <TableCell className="text-right">
-                        £{item.price}
+                        {formatCurrency(item.price)}
                       </TableCell>
                     </TableRow>
                   ))}
