@@ -23,7 +23,7 @@ const OrderDetailsPage = async (props: {
     return ( <OrderDetailsTable order={{
         ...order,
         shippingAddress: order.shippingAddress as ShippingAddress
-    }} /> );
+    }} paypalClientId={process.env.PAYPAL_CLIENT_ID ||"sb"} /> );
 }
  
 export default OrderDetailsPage;
