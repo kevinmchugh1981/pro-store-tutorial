@@ -105,6 +105,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
         }
       }
+    
+      //Handle session updated
+      if(session?.user.name && trigger==="update")
+      {
+        token.name = session.user.name;
+      }
+
+      if(session?.user.email && trigger==="update")
+      {
+        token.email = session.user.email;
+      }
 
       return token;
     },

@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import Pagination from "@/components/pagination";
 
 export const metaData: Metadata = {
-    title:"My Orders"
+    title:"Customer Orders"
 };
 
 
@@ -47,7 +47,7 @@ const OrdersPage = async (props:{searchParams: Promise<{page: string}>}) => {
                     ))} 
                 </TableBody>
             </Table>
-            {orders.totalPages >= 1 && (<Pagination page={Number(page) || 1} totalPages={orders.totalPages}></Pagination>)}
+            {orders.totalPages > 1 && (<Pagination page={Number(page) || 1} totalPages={orders.totalPages}></Pagination>)}
         </div>
     </div> );
 }
