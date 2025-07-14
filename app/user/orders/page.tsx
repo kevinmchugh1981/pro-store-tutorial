@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Pagination from "@/components/pagination";
 
-export const metaData: Metadata = {
-    title:"Customer Orders"
+export const metadata: Metadata = {
+  title: "Customer Orders",
 };
+
 
 
 const OrdersPage = async (props:{searchParams: Promise<{page: string}>}) => {
