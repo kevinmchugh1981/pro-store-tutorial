@@ -92,11 +92,11 @@ export const formatDateTime = (dateString: Date) => {
   };
   const formattedDateTime: string = new Date(dateString).toLocaleDateString(
     "en-UK",
-    dateOptions
+    dateTimeOptions
   );
   const formattedDate: string = new Date(dateString).toLocaleDateString(
     "en-UK",
-    dateTimeOptions
+    dateOptions
   );
   const formattedTime: string = new Date(dateString).toLocaleTimeString(
     "en-UK",
@@ -123,3 +123,10 @@ export function formUrlQuery({
   if (value != null) query.set(key, value);
   return `${window.location.pathname}?${query.toString()}`;
 }
+
+//Format Number
+const NUMBER_FORMATTER = new Intl.NumberFormat("en-UK");
+
+export function formatNumber(value: number) {
+  return NUMBER_FORMATTER.format(value);
+};
