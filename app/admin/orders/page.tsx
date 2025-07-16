@@ -1,27 +1,25 @@
-import { Metadata } from "next";
-import { getUserOrders } from "@/lib/actions/order.actions";
-import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
-import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Pagination from "@/components/pagination";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getAllOrders } from "@/lib/actions/order.actions";
+import { requireAdmin } from "@/lib/auth-guard";
+import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
+import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Customer Orders",
+  title: "Admin Orders",
 };
 
+const AdminOrdersPage = async (props: {
+  searchParams: Promise<{ page: string }>;
+}) => {
+  await requireAdmin();
 
+  const { page = "1" } = await props.searchParams;  
+  const orders = await getAllOrders({page: Number(page)});
 
-const OrdersPage = async (props:{searchParams: Promise<{page: string}>}) => {
-    
-    const {page = "1"} = await props.searchParams;
-
-    const orders = await getUserOrders({
-        page: Number(page),
-    });
-
-
-
-    return ( <div className="space-y-2">
+  return (<div className="space-y-2">
         <h2 className="h2-bold">Orders</h2>
         <div className="overflow-x-auto">
             <Table>
@@ -43,14 +41,14 @@ const OrdersPage = async (props:{searchParams: Promise<{page: string}>}) => {
                             <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
                             <TableCell>{order.isPaid  && order.paidAt ? formatDateTime(order.paidAt).dateTime : 'Not Paid'}</TableCell>
                             <TableCell>{order.isDelivered  && order.deliveredAt ? formatDateTime(order.deliveredAt).dateTime : 'Not Delivered'}</TableCell>
-                            <TableCell><Link href={`/order/${order.id}`}><span className="px-2">Details</span></Link></TableCell>
+                            <TableCell><Button asChild variant="outline" size="sm"><Link href={`/order/${order.id}`}>Details</Link></Button>{/* DELETE*/}</TableCell>
                         </TableRow>
                     ))} 
                 </TableBody>
             </Table>
             {orders.totalPages > 1 && (<Pagination page={Number(page) || 1} totalPages={orders.totalPages}></Pagination>)}
         </div>
-    </div> );
-}
- 
-export default OrdersPage;
+    </div>);
+};
+
+export default AdminOrdersPage;

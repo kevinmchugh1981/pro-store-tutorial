@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -22,10 +21,6 @@ export const metadata: Metadata = {
 
 const AdminOverviewPage = async () => {
   await requireAdmin();
-
-  const session = await auth();
-
-  if (session?.user?.role !== "admin") throw new Error("Unauthorized access");
 
   const summary = await getOrderSummary();
 
