@@ -285,7 +285,7 @@ type SalesDataType = {
 }[];
 
 //Get sales data and order summary
-export async function getOrderSummary(){
+export async function getOrderSummary() {
   //Get counts for each resource
   const ordersCount = await prisma.order.count();
   const productCount = await prisma.product.count();
@@ -293,50 +293,71 @@ export async function getOrderSummary(){
 
   //Calculate the total sales
   const totalSales = await prisma.order.aggregate({
-    _sum: {totalPrice: true}
+    _sum: { totalPrice: true },
   });
 
   //Get monthly sales
-  const salesDataRaw = await prisma.$queryRaw<Array<{month:string, totalSales: Prisma.Decimal}>>
-  `SELECT to_char("createdAt", 'MM/YY') as "month", sum("totalPrice") as "totalSales" FROM "Order" GROUP BY to_char("createdAt", 'MM/YY')`;
+  const salesDataRaw = await prisma.$queryRaw<
+    Array<{ month: string; totalSales: Prisma.Decimal }>
+  >`SELECT to_char("createdAt", 'MM/YY') as "month", sum("totalPrice") as "totalSales" FROM "Order" GROUP BY to_char("createdAt", 'MM/YY')`;
 
   const salesData: SalesDataType = salesDataRaw.map((item) => ({
     month: item.month,
-    totalSales: Number(item.totalSales)
+    totalSales: Number(item.totalSales),
   }));
 
   //Get latest sales
   const latestSales = await prisma.order.findMany({
-    orderBy: {createdAt: "desc"},
-    include:{
+    orderBy: { createdAt: "desc" },
+    include: {
       user: {
-        select:{name: true}
-      }
+        select: { name: true },
+      },
     },
-    take: 6
+    take: 6,
   });
 
-  return{
+  return {
     ordersCount,
     productCount,
     userCount,
     totalSales,
     salesData,
-    latestSales
-  }
+    latestSales,
+  };
 }
 
 //Get all orders
-export async function getAllOrders({limit = PAGE_SIZE, page}: {limit?:number, page: number}){
+export async function getAllOrders({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number;
+  page: number;
+}) {
   const data = await prisma.order.findMany({
-    orderBy:{createdAt: "desc"},
+    orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
-    include:{
-      user: {select:{name:true}}
-    }
+    include: {
+      user: { select: { name: true } },
+    },
   });
 
   const dataCount = await prisma.order.count();
-  return {data, totalPages: Math.ceil(dataCount / limit)};
+  return { data, totalPages: Math.ceil(dataCount / limit) };
+}
+
+//Delete an order
+export async function deleteOrder(orderId: string) {
+  try {
+    await prisma.order.delete({
+      where: { id: orderId },
+    });
+
+    revalidatePath("/admin/orders");
+    return { success: true, message: "Order deleted successfully" };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
 }
