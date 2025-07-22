@@ -12,10 +12,13 @@ import {
 } from "@/components/ui/table";
 import Pagination from "@/components/pagination";
 import DeleteDialog from "@/components/shared/delete-dialog";
+import { requireAdmin } from "@/lib/auth-guard";
 
 const AdminProductsPage = async (props: {
   searchParams: Promise<{ page: string; query: string; category: string }>;
 }) => {
+  await requireAdmin();
+
   const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1;
   const searchText = searchParams.query || "";
@@ -32,7 +35,7 @@ const AdminProductsPage = async (props: {
       <div className="flex-between">
         <h1 className="h2-bold">Products</h1>
         <Button asChild variant="default">
-          <Link href="/products/create">Create Product</Link>
+          <Link href="/admin/products/create">Create Product</Link>
         </Button>
       </div>
       <Table>
