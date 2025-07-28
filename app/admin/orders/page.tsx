@@ -26,12 +26,12 @@ const AdminOrdersPage = async (props: {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Id</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Total</TableHead>
-                        <TableHead>Paid</TableHead>
-                        <TableHead>Delivered</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead>ID</TableHead>
+                        <TableHead>DATE</TableHead>
+                        <TableHead>TOTAL</TableHead>
+                        <TableHead>PAID</TableHead>
+                        <TableHead>DELIVERED</TableHead>
+                        <TableHead>ACTIONS</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
