@@ -1,5 +1,6 @@
 import ProductCard from "@/components/shared/product/product-card";
 import { getAllProducts } from "@/lib/actions/product.actions";
+import { url } from "inspector";
 
 const SearchPage = async (props: {
   searchParams: Promise<{
@@ -21,6 +22,26 @@ const SearchPage = async (props: {
   } = await props.searchParams;
 
 
+  //Construct filter url
+  const getFilterUrl = ({
+    c,s,p,r,pg
+  }:{
+    c?: string;
+    s?: string;
+    p?: string;
+    r?: string;
+    pg?: string;
+  })=>{
+    const params = {q, category, price, rating, sort, page};
+  if(c) params.category = c;
+  if(p) params.price = p;
+  if(s) params.sort = s;
+  if(r) params.rating = r;
+  if(pg) params.page = pg;
+
+  return `/search?${new URLSearchParams(params).toString()}`;
+}
+  
   const products = await getAllProducts({
     query: q,
     category: category,

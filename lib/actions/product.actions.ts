@@ -5,7 +5,7 @@ import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { insertProductSchema, updateProductSchema } from "../validators";
 import z from "zod";
-import { Prisma } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 //Get Latest Products
 
@@ -42,28 +42,57 @@ export async function getAllProducts({
   category,
   price,
   rating,
-  sort
+  sort,
 }: {
   query: string;
   limit?: number;
   page: number;
-  category?: string,
-  price?: string,
-  rating?:string,
-  sort?:string
+  category?: string;
+  price?: string;
+  rating?: string;
+  sort?: string;
 }) {
+  //query filter
   const queryFilter: Prisma.ProductWhereInput =
     query && query !== "all"
       ? {
-          name: {
-            contains: query,
+          name: { contains: query, mode: "insensitive" } as Prisma.StringFilter,
+        }
+      : {};
+
+  //Category filter
+  const categoryFilter: Prisma.ProductWhereInput =
+    category && category !== "all"
+      ? {
+          category: {
+            equals: category,
             mode: "insensitive",
           } as Prisma.StringFilter,
         }
       : {};
 
+  //Price filter
+  const priceFilter: Prisma.ProductWhereInput =
+    price && price !== "all"
+      ? {
+          price: {
+            gte: Number(price.split("-")[0]),
+            lte: Number(price.split("-")[1]),
+          },
+        }
+      : {};
+
+  //Rating filter
+  const ratingFilter: Prisma.ProductWhereInput =
+    rating && rating !== "all" ? { rating: { gte: Number(rating) } } : {};
+
   const data = await prisma.product.findMany({
-    where: { ...queryFilter },
+    where: {
+      ...queryFilter,
+      ...categoryFilter,
+      ...priceFilter,
+      ...ratingFilter,
+    },
     skip: (page - 1) * limit,
     take: limit,
     orderBy: { createdAt: "desc" },
