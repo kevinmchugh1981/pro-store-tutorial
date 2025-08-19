@@ -34,7 +34,7 @@ import { StarIcon } from "lucide-react";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
-import { createUpdateReview } from "@/lib/actions/review.actions";
+import { createUpdateReview, getUserReviewByProductId } from "@/lib/actions/review.actions";
 
 const ReviewForm = ({
   userId,
@@ -53,9 +53,18 @@ const ReviewForm = ({
   });
 
   //Open form handler
-  const handleOpenForm = () => {
+  const handleOpenForm = async () => {
     form.setValue("productId", productId);
     form.setValue("userId", userId);
+
+    const review = await getUserReviewByProductId({productId});
+
+    if(review) {
+      form.setValue("title", review.title);
+      form.setValue("description", review.description);
+      form.setValue("rating", review.rating);
+    }
+
     setOpen(true);
   };
 

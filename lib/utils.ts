@@ -18,7 +18,7 @@ export function formatNumberWithDecimal(num: number): string {
 
 //Format errors
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export  function formatError(error: any) {
+export function formatError(error: any) {
   if (error.name === "ZodError") {
     //Handle Zod Error
     const fieldErrors = Object.keys(error.errors).map(
@@ -76,7 +76,8 @@ export const formatDateTime = (dateString: Date) => {
     month: "short",
     year: "numeric",
     day: "numeric",
-    hour: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: true,
   };
   const dateOptions: Intl.DateTimeFormatOptions = {
@@ -86,9 +87,9 @@ export const formatDateTime = (dateString: Date) => {
     day: "numeric",
   };
   const timeOptions: Intl.DateTimeFormatOptions = {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   };
   const formattedDateTime: string = new Date(dateString).toLocaleDateString(
     "en-UK",
@@ -129,4 +130,4 @@ const NUMBER_FORMATTER = new Intl.NumberFormat("en-UK");
 
 export function formatNumber(value: number) {
   return NUMBER_FORMATTER.format(value);
-};
+}
