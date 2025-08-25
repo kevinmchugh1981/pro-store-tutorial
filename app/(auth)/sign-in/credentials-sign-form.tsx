@@ -45,7 +45,7 @@ const CredentialsSignInForm = () => {
           />
         </div>
         <div>
-          <Label htmlFor="password">Email</Label>
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             name="password"
